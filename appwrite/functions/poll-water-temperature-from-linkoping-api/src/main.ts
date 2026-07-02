@@ -1,14 +1,14 @@
-import { Client, Query, TablesDB } from "node-appwrite";
+import { Client, ID, Query, TablesDB } from "node-appwrite";
 import axios from "axios";
 import { APPWRITE_KEY } from "./secrets";
 
-interface Beach {
+interface BeachInfo {
   id: string;
   name: string;
   temperature: {
     temperature: number;
-    observed: Date;
-    updated: Date;
+    observed: string; // strings in ISO 8601-format for dates
+    updated: string;
   };
   coordinates: {
     x: number;
@@ -54,32 +54,67 @@ const fetchLinkopingTemperatures = async ({ res, log, error }: any) => {
   }
 
   // Iterate through all beaches in parallel to speed up database queries
-  Promise.all(
-    response.data.map((beach: Beach) => {
+  await Promise.all(
+    response.data.map((beachInfo: BeachInfo) => {
       return new Promise<void>((resolve) => {
         const iterator = async () => {
-          const dbBeach = await db.listRows({
+          // Two beaches have broken teremometers that haven't reported temperature for ages, ignore then
+          if (
+            new Date().getTime() -
+              new Date(beachInfo.temperature.observed).getTime() >
+            7 * 24 * 60 * 60 * 1000
+          ) {
+            return;
+          }
+
+          const beaches = await db.listRows({
             databaseId,
             tableId: "beaches",
-            queries: [Query.equal("id", beach.id)],
+            queries: [Query.equal("$id", beachInfo.id)],
           });
 
-          if (dbBeach.total == 0) {
-            log(`${beach.name} is not in beaches table, adding!`);
+          if (beaches.total == 0) {
+            log(`${beachInfo.name} is not in beaches table, adding!`);
             // Add the beach if it doesn't exist in our table
             db.createRow({
               databaseId,
               tableId: "beaches",
-              rowId: beach.id,
+              rowId: beachInfo.id,
               data: {
-                name: beach.name,
-                x: beach.coordinates.x,
-                y: beach.coordinates.y,
+                name: beachInfo.name,
+                x: beachInfo.coordinates.x,
+                y: beachInfo.coordinates.y,
               },
             });
           }
 
           // TODO: Remove beaches that disappeared from the lsit
+
+          const existingTemperatures = await db.listRows({
+            databaseId,
+            tableId: "temepratures", // I know this is a typo, sadly you can't rename appwrite tables and I'm to lazy to delete it and cerate a new one
+            queries: [
+              Query.equal("measuredAt", beachInfo.temperature.observed),
+            ],
+          });
+
+          // Add the current temperature to the table if we haven't already recorded it
+          if (existingTemperatures.total == 0) {
+            log(
+              `${beachInfo.name} got a temperature update: ${beachInfo.temperature.temperature}`,
+            );
+
+            await db.createRow({
+              databaseId,
+              tableId: "temepratures",
+              rowId: ID.unique(),
+              data: {
+                temperature: beachInfo.temperature.temperature,
+                measuredAt: beachInfo.temperature.observed,
+                beaches: beachInfo.id,
+              },
+            });
+          }
         };
 
         iterator().then(resolve);
