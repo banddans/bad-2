@@ -45,5 +45,23 @@
       }
     }
   },
-  "functions": []
+  "functions": [
+    {
+      "$id": "6a46081e002a66dfc38e",
+      "name": "Poll Water Temperature from Linköping API",
+      "runtime": "node-25",
+      "execute": ["any"],
+      "events": [],
+      "scopes": ["users.read"],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "lib/main.js",
+      "commands": "pnpm install",
+      "ignore": ["node_modules", ".npm"],
+      "deploymentRetention": 0,
+      "path": "functions/poll-water-temperature-from-linkoping-api"
+    }
+  ]
 }
