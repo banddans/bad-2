@@ -1,30 +1,21 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L, { LatLng } from "leaflet";
-
-// Fix marker icon
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { LatLng } from "leaflet";
 import { useEffect, useState } from "react";
 import { databaseId, databases } from "../lib/appwrite-client";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../components/ui/popover";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import Beach, { type BeachInfo } from "../beach/Beach";
 
-let DefaultIcon = L.icon({
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-interface Beach {
-  x: number;
-  y: number;
-  name: string;
-  id: string;
-}
-
-export function Map() {
-  const [beaches, setBeaches] = useState<Beach[]>([]);
+function Map() {
+  const [beaches, setBeaches] = useState<BeachInfo[]>([]);
+  const [openBeach, setOpenBeach] = useState<string | null>(null);
 
   useEffect(() => {
     const effect = async () => {
@@ -35,7 +26,7 @@ export function Map() {
 
       setBeaches(
         newBeaches.rows.map((row) => {
-          return { x: row.x, y: row.y, name: row.name, id: row.$id };
+          return { x: row.x, y: row.y, name: row.name, id: row.$id }; // TODO: Adjust the positions? They are a bit off right now.
         }),
       );
     };
@@ -48,7 +39,7 @@ export function Map() {
       {/* Leaflet does not like flexbox here, set fixed height instead */}
       <MapContainer
         center={new LatLng(58.41086, 15.62157)}
-        zoom={13}
+        zoom={10}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
@@ -57,12 +48,18 @@ export function Map() {
         />
 
         {beaches.map((beach) => (
-          <Marker position={new LatLng(beach.y, beach.x)} key={beach.id}>
-            <Popup>{beach.name}</Popup>
-          </Marker>
+          <Beach
+            beach={beach}
+            key={beach.id}
+            isOpen={openBeach == beach.id}
+            open={() => setOpenBeach(beach.id)}
+            close={() => setOpenBeach(null)}
+          />
         ))}
       </MapContainer>
-      <div className="absolute top-0 left-0 p-2" style={{ zIndex: 500 }}></div>
+      <div className="absolute top-0 left-0 p-2"></div>
     </div>
   );
 }
+
+export default Map;

@@ -140,3 +140,25 @@ body {
 .leaflet-control-attribution {
   display: none; /* TODO: Add a button to show it */
 }
+
+.leaflet-pane {
+  z-index: 0 !important; /* Still unsure why they set z-index to 400, I removed it as nothing broke then */
+}
+
+/* Make all leaflet popups invisible so we only see the shadcn ones */
+.custom-invisible-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.custom-invisible-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.custom-invisible-popup .leaflet-popup-tip-container {
+  display: none !important; /* Remove the arrow under the popup */
+}

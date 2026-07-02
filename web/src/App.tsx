@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Map } from "./map/Map";
+import Map from "./map/Map";
 import { client } from "./lib/appwrite-client";
 
 function App() {
