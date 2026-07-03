@@ -220,12 +220,15 @@ function Beach({
                     <YAxis
                       domain={[15, 25]}
                       tickFormatter={(value: number) => `${value}°C`}
+                      width={30}
                     />
 
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent hideLabel />}
-                    />
+                    <div className="hidden">
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel />}
+                      />
+                    </div>
 
                     <Line
                       dataKey="temperature"
