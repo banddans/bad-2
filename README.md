@@ -8,6 +8,7 @@ Håll koll på alla badtemperaturer i linköping, frontend för [linköping öpp
 - UI: shadcn
 - Karta: react-leaflet + OpenStreetMap + CARTO
 - Backend (BaaS): Appwrite
+- Analytics: Umami
 
 ## Contributing
 
