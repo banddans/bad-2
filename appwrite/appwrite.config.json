@@ -58,7 +58,7 @@
       "enabled": true,
       "logging": true,
       "entrypoint": "lib/main.js",
-      "commands": "pnpm install",
+      "commands": "pnpm install && pnpm run build",
       "ignore": ["node_modules", ".npm"],
       "deploymentRetention": 0,
       "path": "functions/poll-water-temperature-from-linkoping-api"

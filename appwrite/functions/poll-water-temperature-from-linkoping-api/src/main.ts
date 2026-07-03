@@ -1,6 +1,5 @@
 import { Client, ID, Query, TablesDB } from "node-appwrite";
 import axios from "axios";
-import { APPWRITE_KEY } from "./secrets";
 
 interface BeachInfo {
   id: string;
@@ -18,19 +17,18 @@ interface BeachInfo {
 
 const fetchLinkopingTemperatures = async ({ res, log, error }: any) => {
   // Check if the .env is configured correctly
-  // TODO: Use proper .env variables when deploying
-  /*if (!process.env.APPWRITE_KEY) {
+  if (!process.env.APPWRITE_KEY) {
     const message = "No APPWRITE_KEY variable found in .env!";
     error(message);
     return res.json({ success: false, error: message });
-  }*/
+  }
 
   // Connect to appwrite
   log("Creating client...");
   const client = new Client()
     .setEndpoint("https://fra.cloud.appwrite.io/v1")
     .setProject("6a4560470013afa2043a")
-    .setKey(APPWRITE_KEY);
+    .setKey(process.env.APPWRITE_KEY);
 
   log("Connecting to database...");
   const db = new TablesDB(client);
