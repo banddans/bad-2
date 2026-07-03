@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { LatLng } from "leaflet";
+import { latLng, LatLng, latLngBounds, LatLngBounds } from "leaflet";
 import { useEffect, useState } from "react";
 import { databaseId, databases } from "../lib/appwrite-client";
 import Beach, { type BeachInfo } from "../beach/Beach";
@@ -31,8 +31,14 @@ function Map() {
       {/* Leaflet does not like flexbox here, set fixed height instead */}
       <MapContainer
         center={new LatLng(58.41086, 15.62157)}
-        zoom={10}
+        zoom={11}
         style={{ height: "100%", width: "100%" }}
+        minZoom={10}
+        maxBoundsViscosity={1}
+        maxBounds={latLngBounds(
+          latLng(57.94959931937716, 15.383925),
+          latLng(58.616927, 16.096536),
+        )}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"

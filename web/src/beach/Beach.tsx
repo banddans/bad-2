@@ -7,7 +7,7 @@ import {
 import { renderToString } from "react-dom/server";
 import { Badge } from "../components/ui/badge";
 import { TriangleAlert, WavesHorizontal } from "lucide-react";
-import { Marker, Popup } from "react-leaflet";
+import { Marker, Popup, useMapEvents } from "react-leaflet";
 import { useEffect, useState } from "react";
 import { databaseId, databases } from "../lib/appwrite-client";
 import { motion } from "motion/react";
@@ -33,11 +33,12 @@ interface Temperature {
   measuredAt: Date;
 }
 
-const marker = (name: string) => {
+const marker = (name: string, iconZoomVariant: number) => {
+  // TODO: Add smooth animation instead of jumping when changing iconZoomVariant
   const html = renderToString(
     <Badge roundBottomLeftCorner={false}>
       <WavesHorizontal />
-      {name}
+      {iconZoomVariant == IconZoomVariant.Badge && name}
     </Badge>,
   );
 
@@ -60,6 +61,11 @@ function padWithZeroes(x: string, zeroCount: number) {
   return new Array(zeroCount - x.length).fill("0").join("") + x;
 }
 
+const IconZoomVariant = {
+  TinyBadge: 0,
+  Badge: 1,
+};
+
 function Beach({
   beach,
   isOpen,
@@ -71,6 +77,9 @@ function Beach({
   open: () => void;
   close: () => void;
 }) {
+  const [iconZoomVariant, setIconZoomVariant] = useState<number>(
+    IconZoomVariant.Badge,
+  );
   const [temperatures, setTemperatures] = useState<Temperature[]>([]);
   const [fetchDone, setFetchDone] = useState<boolean>(false);
   const [hovering, setHovering] = useState<boolean>(false);
@@ -83,6 +92,16 @@ function Beach({
       : undefined;
   const showBadTeremometerAlert =
     hoursScinceLatestTemperature && hoursScinceLatestTemperature > 5;
+
+  const map = useMapEvents({
+    zoom() {
+      if (map.getZoom() < 11.5) {
+        setIconZoomVariant(IconZoomVariant.TinyBadge);
+      } else {
+        setIconZoomVariant(IconZoomVariant.Badge);
+      }
+    },
+  });
 
   useEffect(() => {
     const effect = async () => {
@@ -120,7 +139,7 @@ function Beach({
   return (
     <Marker
       position={new LatLng(beach.y, beach.x)}
-      icon={marker(beach.name)}
+      icon={marker(beach.name, iconZoomVariant)}
       eventHandlers={{
         click: () => {
           open();
@@ -151,7 +170,8 @@ function Beach({
                     {temperatures[temperatures.length - 1].temperature}°C
                   </h1>
                   {!showBadTeremometerAlert && (
-                    <p className="leading-7 text-center">
+                    <p className="leading-7 text-center px-5">
+                      {beach.name} -{" "}
                       {hoursScinceLatestTemperature! < 1
                         ? "Precis nyss"
                         : `För ${Math.floor(hoursScinceLatestTemperature!)} ${Math.floor(hoursScinceLatestTemperature!) == 1 ? "timme" : "timmar"} sedan`}
