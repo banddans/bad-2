@@ -18,7 +18,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "../components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 
 export interface BeachInfo {
@@ -107,8 +107,8 @@ function Beach({
     const effect = async () => {
       if ((hovering || isOpen) && temperatures.length == 0 && !fetching) {
         setFetching(true);
-        setTemperatures(
-          (
+        setTemperatures([
+          ...(
             await databases.listRows({
               databaseId,
               tableId: "temepratures",
@@ -128,7 +128,7 @@ function Beach({
               measuredAt: new Date(row.measuredAt),
             };
           }),
-        );
+        ]);
         setFetchDone(true);
       }
     };
@@ -205,13 +205,21 @@ function Beach({
 
                     <XAxis
                       dataKey="measuredAt"
+                      scale="time"
+                      type="number"
+                      domain={[
+                        new Date().getTime() - 24 * 60 * 60 * 1000,
+                        new Date().getTime(),
+                      ]}
                       tickLine={false}
                       axisLine={false}
                       tickMargin={8}
-                      tickFormatter={(value: Date) =>
-                        `${padWithZeroes(value.getHours().toString(), 2)}:${padWithZeroes(value.getMinutes().toString(), 2)}`
+                      tickFormatter={(value: number) =>
+                        `${padWithZeroes(new Date(value).getHours().toString(), 2)}:${padWithZeroes(new Date(value).getMinutes().toString(), 2)}`
                       }
                     />
+
+                    <YAxis domain={["auto", "auto"]} hide />
 
                     <ChartTooltip
                       cursor={false}
@@ -239,7 +247,9 @@ function Beach({
                   <TriangleAlert />
                   <AlertTitle>Dålig termometer</AlertTitle>
                   <AlertDescription>
-                    Ingen temperatur har rapporterats de senaste 24 timmarna
+                    Ingen temperatur har rapporterats de senaste 24 timmarna.
+                    Badplatsen kommer att tas bort om inga nya temperaturer
+                    kommer på en vecka.
                   </AlertDescription>
                 </Alert>
               </motion.div>
