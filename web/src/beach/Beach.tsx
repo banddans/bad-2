@@ -161,7 +161,7 @@ function Beach({
 
           <PopoverContent
             onInteractOutside={close}
-            className="w-[75vw] max-w-150"
+            className="w-[75vw] max-w-150 z-800"
           >
             {temperatures.length > 0 ? (
               <motion.div layout key={"beachTempMain"}>

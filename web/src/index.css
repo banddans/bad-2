@@ -143,10 +143,6 @@ body {
   display: none;
 }
 
-.leaflet-pane {
-  z-index: 0 !important; /* Still unsure why they set z-index to 400, I removed it as nothing broke then */
-}
-
 /* Make all leaflet popups invisible so we only see the shadcn ones */
 .custom-invisible-popup .leaflet-popup-content-wrapper {
   background: transparent !important;

@@ -20,7 +20,7 @@ function MapUtilityControls() {
         isOpen={isLegalDialogOpen}
         setIsDialogOpen={setIsLegalDialogOpen}
       />
-      <div className="absolute top-0 left-0 p-2">
+      <div className="absolute top-0 left-0 p-2 z-800">
         <div className="flex flex-col gap-1">
           <ButtonGroup>
             <Button size={"icon-lg"} onClick={() => map.zoomIn()}>
@@ -32,7 +32,7 @@ function MapUtilityControls() {
           </ButtonGroup>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 p-2">
+      <div className="absolute bottom-0 left-0 p-2 z-800">
         <ButtonGroup>
           <Button
             size={"icon-sm"}
