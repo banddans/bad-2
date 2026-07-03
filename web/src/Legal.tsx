@@ -26,7 +26,7 @@ function LegalDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsDialogOpen}>
       <form>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm z-800">
           <DialogHeader>
             <DialogTitle>Juridisk information</DialogTitle>
           </DialogHeader>
