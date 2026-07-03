@@ -180,7 +180,7 @@ function Beach({
                 </div>
 
                 {showBadTeremometerAlert && (
-                  <Alert variant="default">
+                  <Alert variant="default" className="mb-4">
                     <TriangleAlert />
                     <AlertTitle>Dålig termometer</AlertTitle>
                     <AlertDescription>
@@ -211,15 +211,16 @@ function Beach({
                         new Date().getTime() - 24 * 60 * 60 * 1000,
                         new Date().getTime(),
                       ]}
-                      tickLine={false}
-                      axisLine={false}
                       tickMargin={8}
                       tickFormatter={(value: number) =>
                         `${padWithZeroes(new Date(value).getHours().toString(), 2)}:${padWithZeroes(new Date(value).getMinutes().toString(), 2)}`
                       }
                     />
 
-                    <YAxis domain={["auto", "auto"]} hide />
+                    <YAxis
+                      domain={[15, 25]}
+                      tickFormatter={(value: number) => `${value}°C`}
+                    />
 
                     <ChartTooltip
                       cursor={false}
