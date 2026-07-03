@@ -65,6 +65,11 @@ const fetchLinkopingTemperatures = async ({ res, log, error }: any) => {
             return;
           }
 
+          // There is a duplicate of Sandvik Roxen, ignore one of them
+          if (beachInfo.id == "00080e39-fd89-4784-aa48-bcb15e91f4da") {
+            return;
+          }
+
           const beaches = await db.listRows({
             databaseId,
             tableId: "beaches",
