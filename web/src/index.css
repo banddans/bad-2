@@ -133,12 +133,14 @@ body {
   }
 }
 
+/* We're using custom shadcn ui for this, hide all builtin leaflet controls */
+
 .leaflet-control-zoom {
   display: none;
 }
 
 .leaflet-control-attribution {
-  display: none; /* TODO: Add a button to show it */
+  display: none;
 }
 
 .leaflet-pane {

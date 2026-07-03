@@ -1,9 +1,60 @@
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { latLng, LatLng, latLngBounds, LatLngBounds } from "leaflet";
+import { latLng, LatLng, latLngBounds } from "leaflet";
 import { useEffect, useState } from "react";
 import { databaseId, databases } from "../lib/appwrite-client";
 import Beach, { type BeachInfo } from "../beach/Beach";
+import { Button } from "@/components/ui/button";
+import { Copyright, MinusIcon, PlusIcon } from "lucide-react";
+import Github from "@/assets/github.svg?react";
+import LegalDialog from "@/Legal";
+import { ButtonGroup } from "@/components/ui/button-group";
+
+function MapUtilityControls() {
+  const [isLegalDialogOpen, setIsLegalDialogOpen] = useState<boolean>(false);
+  const map = useMap();
+
+  return (
+    <>
+      <LegalDialog
+        isOpen={isLegalDialogOpen}
+        setIsDialogOpen={setIsLegalDialogOpen}
+      />
+      <div className="absolute top-0 left-0 p-2">
+        <div className="flex flex-col gap-1">
+          <ButtonGroup>
+            <Button size={"icon-lg"} onClick={() => map.zoomIn()}>
+              <PlusIcon />
+            </Button>
+            <Button size={"icon-lg"} onClick={() => map.zoomOut()}>
+              <MinusIcon />
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+      <div className="absolute bottom-0 left-0 p-2">
+        <ButtonGroup>
+          <Button
+            size={"icon-sm"}
+            variant={"outline"}
+            onClick={() => setIsLegalDialogOpen(true)}
+          >
+            <Copyright />
+          </Button>
+          <Button
+            size={"icon-sm"}
+            variant={"outline"}
+            onClick={() => {
+              window.open("https://github.com/banddans/bad-2", "_blank");
+            }}
+          >
+            <Github />
+          </Button>
+        </ButtonGroup>
+      </div>
+    </>
+  );
+}
 
 function Map() {
   const [beaches, setBeaches] = useState<BeachInfo[]>([]);
@@ -40,10 +91,7 @@ function Map() {
           latLng(58.616927, 16.096536),
         )}
       >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        />
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
         {beaches.map((beach) => (
           <Beach
@@ -54,8 +102,9 @@ function Map() {
             close={() => setOpenBeach(null)}
           />
         ))}
+
+        <MapUtilityControls />
       </MapContainer>
-      <div className="absolute top-0 left-0 p-2"></div>
     </div>
   );
 }
