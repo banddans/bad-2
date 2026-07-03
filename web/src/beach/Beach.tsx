@@ -75,6 +75,14 @@ function Beach({
   const [fetchDone, setFetchDone] = useState<boolean>(false);
   const [hovering, setHovering] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
+  const hoursScinceLatestTemperature: number | undefined =
+    temperatures.length > 0
+      ? (new Date().getTime() -
+          temperatures[temperatures.length - 1].measuredAt.getTime()) /
+        (60 * 60 * 1000)
+      : undefined;
+  const showBadTeremometerAlert =
+    hoursScinceLatestTemperature && hoursScinceLatestTemperature > 5;
 
   useEffect(() => {
     const effect = async () => {
@@ -138,17 +146,29 @@ function Beach({
           >
             {temperatures.length > 0 ? (
               <motion.div layout key={"beachTempMain"}>
-                <h1 className="scroll-m-20 text-center text-3xl md:text-5xl font-extrabold tracking-tight text-balance py-2 md:py-4">
-                  {temperatures[temperatures.length - 1].temperature}°C
-                </h1>
+                <div className="py-3 md:py-4">
+                  <h1 className="scroll-m-20 text-center text-3xl md:text-5xl font-extrabold tracking-tight text-balance">
+                    {temperatures[temperatures.length - 1].temperature}°C
+                  </h1>
+                  {!showBadTeremometerAlert && (
+                    <p className="leading-7 text-center">
+                      {hoursScinceLatestTemperature! < 1
+                        ? "Precis nyss"
+                        : `För ${Math.floor(hoursScinceLatestTemperature!)} ${Math.floor(hoursScinceLatestTemperature!) == 1 ? "timme" : "timmar"} sedan`}
+                    </p>
+                  )}
+                </div>
 
-                <Alert variant="default">
-                  <TriangleAlert />
-                  <AlertTitle>Dålig termometer</AlertTitle>
-                  <AlertDescription>
-                    Temperaturen mättes cirka 5 timmar sedan
-                  </AlertDescription>
-                </Alert>
+                {showBadTeremometerAlert && (
+                  <Alert variant="default">
+                    <TriangleAlert />
+                    <AlertTitle>Dålig termometer</AlertTitle>
+                    <AlertDescription>
+                      Temperaturen mättes cirka{" "}
+                      {Math.floor(hoursScinceLatestTemperature!)} timmar sedan
+                    </AlertDescription>
+                  </Alert>
+                )}
                 <ChartContainer
                   config={chartConfig}
                   className="min-h-50 w-full h-full"
@@ -188,7 +208,7 @@ function Beach({
                   </LineChart>
                 </ChartContainer>
               </motion.div>
-            ) : fetchDone ? (
+            ) : (
               <motion.div
                 layout
                 animate={{ height: "auto" }}
@@ -202,10 +222,6 @@ function Beach({
                     Ingen temperatur har rapporterats de senaste 24 timmarna
                   </AlertDescription>
                 </Alert>
-              </motion.div>
-            ) : (
-              <motion.div layout>
-                <div className="h-[340px] m:h-[468px]"></div>
               </motion.div>
             )}
           </PopoverContent>
