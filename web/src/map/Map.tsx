@@ -3,14 +3,6 @@ import "leaflet/dist/leaflet.css";
 import { LatLng } from "leaflet";
 import { useEffect, useState } from "react";
 import { databaseId, databases } from "../lib/appwrite-client";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../components/ui/popover";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import Beach, { type BeachInfo } from "../beach/Beach";
 
 function Map() {
