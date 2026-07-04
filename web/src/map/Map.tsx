@@ -87,8 +87,8 @@ function Map() {
         minZoom={10}
         maxBoundsViscosity={1}
         maxBounds={latLngBounds(
-          latLng(57.94959931937716, 15.383925),
-          latLng(58.616927, 16.096536),
+          latLng(57.927818431203605, 14.589417849649333),
+          latLng(59.02301086482437, 17.44501580127279),
         )}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
